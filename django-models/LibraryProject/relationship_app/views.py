@@ -11,7 +11,6 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from django.contrib.auth.decorators import user_passes_test
 
-
 # Function-based view to list all books
 def list_books(request):
     books = Book.objects.all()
@@ -33,27 +32,31 @@ def register(request):
         form = UserCreationForm()
     return render(request, 'relationship_app/register.html', {'form': form})
 
-
-def check_role(role):
-    def inner(user):
-        return hasattr(user, 'userprofile') and user.userprofile.role == role
-    return inner
-
-@user_passes_test(check_role('Admin'))
-def admin_view(request):
-    return render(request, 'admin_view.html')
-
-@user_passes_test(check_role('Librarian'))
-def librarian_view(request):
-    return render(request, 'librarian_view.html')
-    
-@user_passes_test(check_role('Member'))
-def member_view(request):
-    return render(request, 'member_view.html')
-
 def list_books(request):
     return render(request, 'books.html')
 
 class LibraryDetailView(DetailView):
     model = Library
     template_name = 'library_detail.html'
+
+
+def is_admin(user):
+    return hasattr(user, 'userprofile') and user.userprofile.role == 'Admin'
+
+def is_librarian(user):
+    return hasattr(user, 'userprofile') and user.userprofile.role == 'Librarian'
+
+def is_member(user):
+    return hasattr(user, 'userprofile') and user.userprofile.role == 'Member'
+
+@user_passes_test(is_admin)
+def admin_view(request):
+    return render(request, 'admin_view.html')
+
+@user_passes_test(is_librarian)
+def librarian_view(request):
+    return render(request, 'librarian_view.html')
+
+@user_passes_test(is_member)
+def member_view(request):
+    return render(request, 'member_view.html')
