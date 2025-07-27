@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-_9g1_-%(2&%!k8i@7j_tvu&2e6vgorg+cca$o27bj73p(=_d72'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bookshelf.apps.BookshelfConfig',
-    'relationship_app.apps.RelationshipAppConfig'
+    'relationship_app.apps.RelationshipAppConfig',
+    'csp',
 ]
 
 MIDDLEWARE = [
@@ -49,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware',
 ]
 
 ROOT_URLCONF = 'LibraryProject.urls'
@@ -124,3 +126,23 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = "/accounts/profile"
 LOGOUT_REDIRECT_URL = "/accounts/profile"
+
+
+# Prevents MIME-type sniffing
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+# Enables XSS filtering
+SECURE_BROWSER_XSS_FILTER = True
+
+# Prevent your site from being embedded in an iframe
+X_FRAME_OPTIONS = 'DENY'
+
+# Ensure cookies are only sent over HTTPS
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+# Add this to enable HTTPS redirect
+SECURE_SSL_REDIRECT = True
+
+# Optional but recommended:
+# ALLOWED_HOSTS = ['yourdomain.com']
