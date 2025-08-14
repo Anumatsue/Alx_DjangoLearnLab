@@ -9,9 +9,9 @@ from datetime import datetime
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters import rest_framework  # required for checker
 from django_filters.rest_framework import DjangoFilterBackend
-
-
+from .serializers import BookSerializer
 
 class AuthorListCreateView(generics.ListCreateAPIView):
     """
