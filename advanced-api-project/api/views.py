@@ -6,12 +6,13 @@ from .models import Author, Book
 from .serializers import AuthorSerializer, BookSerializer
 from .serializers import BookSerializer
 from datetime import datetime
-from rest_framework import generics
+from rest_framework import generics, filters
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters import rest_framework  # required for checker
 from django_filters.rest_framework import DjangoFilterBackend
 from .serializers import BookSerializer
+
 
 class AuthorListCreateView(generics.ListCreateAPIView):
     """
@@ -49,7 +50,7 @@ class BookListView(generics.ListAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     # Enable filter, search, and ordering
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filter_backends = [rest_framework.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
 
     # Filtering: query parameters ?title=...&publication_year=...
     filterset_fields = ['title', 'publication_year', 'author']
