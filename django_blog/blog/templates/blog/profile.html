@@ -1,0 +1,28 @@
+{% extends "blog/base.html" %}
+{% load static %}
+{% block content %}
+{% include "partials/messages.html" %}
+<h2>Your Profile</h2>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <fieldset>
+    <legend>Account</legend>
+    {{ u_form.as_p }}
+  </fieldset>
+
+  <fieldset>
+    <legend>Profile</legend>
+    {% if request.user.profile.avatar %}
+      <p>Current Avatar:</p>
+      <img src="{{ request.user.profile.avatar.url }}" alt="Avatar" style="max-width:150px;">
+    {% endif %}
+    {{ p_form.as_p }}
+  </fieldset>
+
+  <button type="submit">Save changes</button>
+</form>
+
+<p><a href="{% url 'logout' %}">Log out</a></p>
+{% endblock %}
