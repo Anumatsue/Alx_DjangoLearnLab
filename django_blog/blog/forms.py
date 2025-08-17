@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Profile, Post
+from .models import Profile, Post, Tag
 from .models import Comment
+
 
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
@@ -28,19 +29,30 @@ class ProfileForm(forms.ModelForm):
         fields = ("bio", "avatar")
 
 
-
-class PostForm(forms.ModelForm):
-    class Meta:
-        model = Post
-        fields = ("title", "content")  # author set in the view
-        widgets = {
-            "title": forms.TextInput(attrs={"placeholder": "Post title"}),
-            "content": forms.Textarea(attrs={"rows": 8, "placeholder": "Write your content..."}),
-        }
-
-
-
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['content']
+
+
+class PostForm(forms.ModelForm):
+    tags = forms.CharField(required=False, help_text="Enter tags separated by commas")
+
+    class Meta:
+        model = Post
+        fields = ["title", "content", "tags"]
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if commit:
+            instance.save()
+        # handle tags
+        tag_names = self.cleaned_data["tags"].split(",")
+        tag_objs = []
+        for name in tag_names:
+            name = name.strip()
+            if name:
+                tag_obj, created = Tag.objects.get_or_create(name=name)
+                tag_objs.append(tag_obj)
+        instance.tags.set(tag_objs)
+        return instance
