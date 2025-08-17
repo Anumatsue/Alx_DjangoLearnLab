@@ -7,8 +7,9 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .forms import PostForm
-from .models import Post
+from .forms import PostForm, CommentForm
+from .models import Post, Comment
+from django.shortcuts import get_object_or_404, redirect
 
 
 from .forms import RegistrationForm, UserUpdateForm, ProfileForm
@@ -48,7 +49,6 @@ def profile(request):
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileForm(instance=request.user.profile)
     return render(request, "blog/profile.html", {"u_form": u_form, "p_form": p_form})
-
 
 class PostListView(ListView):
     model = Post
@@ -95,3 +95,41 @@ class PostDeleteView(LoginRequiredMixin, AuthorRequiredMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, "Post deleted.")
         return super().delete(request, *args, **kwargs)
+
+
+# Create comment
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+
+    def form_valid(self, form):
+        post = get_object_or_404(Post, pk=self.kwargs['pk'])
+        form.instance.author = self.request.user
+        form.instance.post = post
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return self.object.post.get_absolute_url()
+
+
+# Update comment
+class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Comment
+    form_class = CommentForm
+
+    def test_func(self):
+        return self.get_object().author == self.request.user
+
+    def get_success_url(self):
+        return self.object.post.get_absolute_url()
+
+
+# Delete comment
+class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Comment
+
+    def test_func(self):
+        return self.get_object().author == self.request.user
+
+    def get_success_url(self):
+        return self.object.post.get_absolute_url()
