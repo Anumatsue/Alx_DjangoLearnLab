@@ -56,3 +56,4 @@ class PostForm(forms.ModelForm):
                 tag_objs.append(tag_obj)
         instance.tags.set(tag_objs)
         return instance
+    
