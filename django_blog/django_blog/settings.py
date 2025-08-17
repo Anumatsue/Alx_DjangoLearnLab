@@ -126,3 +126,20 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Where to send users after login/logout
+LOGIN_REDIRECT_URL = "profile"
+LOGOUT_REDIRECT_URL = "login"
+LOGIN_URL = "login"
+
+# Dev-only email backend (shows emails in console)
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+# Media (for profile avatars)
+
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
+# If you don’t use a global static/ directory, remove STATICFILES_DIRS.
+# Otherwise, ensure it exists: BASE_DIR / "static"
+# STATICFILES_DIRS = [BASE_DIR / "static"]
