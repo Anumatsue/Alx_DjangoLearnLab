@@ -23,3 +23,8 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s profile"
+    
+class Post(models.Model):
+    # ... your fields ...
+    def get_absolute_url(self):
+        return reverse("post-detail", kwargs={"pk": self.pk})

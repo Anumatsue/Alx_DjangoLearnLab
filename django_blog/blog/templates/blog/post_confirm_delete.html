@@ -1,0 +1,12 @@
+{% extends "blog/base.html" %}
+{% load static %}
+{% block content %}
+<h2>Delete “{{ object.title }}”</h2>
+<p>This action cannot be undone. Are you sure?</p>
+
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Yes, delete</button>
+  <a href="{% url 'post-detail' object.pk %}">No, go back</a>
+</form>
+{% endblock %}
