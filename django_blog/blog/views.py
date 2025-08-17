@@ -155,3 +155,19 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def get_success_url(self):
         return self.object.post.get_absolute_url()
+    
+
+
+class PostByTagListView(ListView):
+    model = Post
+    template_name = "blog/post_list_by_tag.html"
+    context_object_name = "posts"
+
+    def get_queryset(self):
+        tag_slug = self.kwargs.get("tag_slug")
+        return Post.objects.filter(tags__slug=tag_slug).distinct()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["tag"] = self.kwargs.get("tag_slug")
+        return context
