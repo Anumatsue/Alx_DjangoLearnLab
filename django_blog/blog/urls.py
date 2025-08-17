@@ -27,7 +27,7 @@ urlpatterns = [
 
 urlpatterns = [
     # existing CRUD paths...
-    path("search/", views.search_posts, name="search_posts"),
+    path('search/', views.search, name='search'),
     path("tags/<str:tag_name>/", views.posts_by_tag, name="posts_by_tag"),
 ]
 
