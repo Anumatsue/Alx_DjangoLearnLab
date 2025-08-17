@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Profile, Post, Tag
+from .models import Profile, Post
 from .models import Comment
+from taggit.forms import TagWidget 
 
 
 class RegistrationForm(UserCreationForm):
@@ -35,25 +36,11 @@ class CommentForm(forms.ModelForm):
         fields = ['content']
 
 
-class PostForm(forms.ModelForm):
-    tags = forms.CharField(required=False, help_text="Enter tags separated by commas")
 
+class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ["title", "content", "tags"]
-
-    def save(self, commit=True):
-        instance = super().save(commit=False)
-        if commit:
-            instance.save()
-        # handle tags
-        tag_names = self.cleaned_data["tags"].split(",")
-        tag_objs = []
-        for name in tag_names:
-            name = name.strip()
-            if name:
-                tag_obj, created = Tag.objects.get_or_create(name=name)
-                tag_objs.append(tag_obj)
-        instance.tags.set(tag_objs)
-        return instance
-    
+        fields = ['title', 'content', 'tags']
+        widgets = {
+            'tags': TagWidget(),   # ✅ use TagWidget for better tag input
+        }
